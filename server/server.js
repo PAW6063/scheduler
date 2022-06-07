@@ -1,36 +1,23 @@
-const { ApolloServer, gql } = require('apollo-server');
+const express = require('express');
+const { ApolloServer } = require('apollo-server-express');
+const { typeDefs, resolvers } = require('./schemas');
+const database = require('./config/connection');
 
-const typeDefs = gql`
-  type User {
-    name: String
-  }
-
-  type Query {
-    users: [User]
-  }
-`;
-
-const users = [
-  {
-    name: 'The Awakening',
-  },
-  {
-    name: 'City of Glass',
-  },
-];
-
-const resolvers = {
-  Query: {
-    users: () => users,
-  },
-};
-
+const PORT = process.env.PORT || 3001;
+const app = express();
 const server = new ApolloServer({
   typeDefs,
-  resolvers,
-  csrfPrevention: true,
+  resolvers
 });
 
-server.listen().then(({ url }) => {
-  console.log(`Server running at ${url}`);
+server.applyMiddleware({ app });
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+database.once('open', () => {
+  app.listen(PORT, () => {
+    console.log(`API server running on port ${PORT}!`);
+    console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);
+  });
 });
