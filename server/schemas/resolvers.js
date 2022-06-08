@@ -12,7 +12,15 @@ const resolvers = {
 
     Mutation: {
         addUser: async (parent, user) => {
-            return await User.create(user);
+            return await User.create({
+                permissionLevel: user.permissionLevel,
+                createdAt: user.createdAt,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                phoneNumber: user.phoneNumber,
+                email: user.email,
+                password: user.password,
+            });
         },
     },
 };

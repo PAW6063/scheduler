@@ -2,12 +2,13 @@ const { Schema, model } = require('mongoose');
 
 const userSchema = new Schema(
     {
-        permisionLevel: {
+        permissionLevel: {
             type: String,
             enum: {
                 values: ['Employee', 'Manager', 'Owner', 'Tech Guy'],
                 message: '{VALUE} is not supported'
             },
+            required: true,
             trim: true,
             default: 'Employee'
         },
